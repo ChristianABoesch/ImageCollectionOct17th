@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+    body{
+      margin:0;
+    }
+    #container{
+      width: 100vw;
+      height: 100vh;
+    }
+    .slide{
+      width: 100%;
+      height: 100%;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      display: block;
+      position:absolute;
+      transition: 2s;
+    }
+    #prev{
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+    }
+    #next{
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+    }
+    #numContainer{
+      position:fixed;
+      width: 60%;
+      left: 20%;
+      text-align:center;
+      bottom:10px;
+    }
+    .active{
+      background:gold;
+    }
+  </style>
+  <script>
+    var allImages = [];
+    var allPrompts = [];
+    var currentSlide = 0; 
+
+    function start(){
+      
+      allImages = ['images/motivational-poster-photorealistic-digital-art-682403928.png',
+          'images/a-series-of-motivational-posters-on-a-wall-photorealistic-digital-art-662114165.png',
+          'images/a-motivational-poster-with-the-words-do-what-you-cant-photorealistic-digital-art-864050287.png',
+          'images/a-motivational-poster-with-the-words-cant-what-you-dont-photorealistic-digital-art-107177890.png',
+          'images/a-motivational-poster-with-the-words-be-who-you-arent-photorealistic-digital-art-574910400.png']
+      
+      allPrompts = ['A motivational poster',
+          'A series of motivational posters on a wall',
+          'A motivational poster with the words "do what you can\'t"',
+          'A motivational poster with the words "be what you aren\'t"',
+          'A motivational poster with the words "can\'t what you don\'t"']
+      
+      var markup = "";
+      for(var i = 0; i < allImages.length; i++){
+        markup += "<div class='slide' style='background-image:url(" + allImages[i] + ")'></div>"
+      }
+      document.getElementById("container").innerHTML = markup;
+
+      markup = "";
+      for(var i = 0; i < allImages.length; i++){
+        markup += "<button onclick='numClicked(" + i + ")' class='num'>" + (i + 1) + "</button>"
+      }
+      document.getElementById("numContainer").innerHTML = markup;
+
+      goToCurrentSlide();
+    }
+
+    var goPrev = function(){
+      currentSlide = currentSlide - 1
+      if(currentSlide < 0){
+        currentSlide = allImages.length;
+      }
+      goToCurrentSlide();
+    }
+
+    var goNext = function(){
+      currentSlide = currentSlide + 1;
+      if(currentSlide >= allImages.length){
+        currentSlide = 0;
+      }
+      goToCurrentSlide();
+    }
+
+    var numClicked = function(n){
+      currentSlide = n;
+      goToCurrentSlide(); 
+    }
+
+    var goToCurrentSlide = function(){
+      var allImgObjs = document.getElementsByClassName("slide")
+      var allNumObjs = document.getElementsByClassName("num")
+      var allPromptObjs = document.getElementsByClassName("prompt")
+      
+      // Update the prompt
+      var markup = "<h1>" + allPrompts[currentSlide] + "</h1>"
+      document.getElementById("promptContainer").innerHTML = markup;
+
+      for(var i = 0; i < allImgObjs.length; i++){
+        if(i==currentSlide){
+          allImgObjs[i].style.opacity = "1";
+          allNumObjs[i].className = "num active"; 
+        }
+        else{
+          allImgObjs[i].style.opacity = "0";
+          allNumObjs[i].className = "num"; 
+        }
+      }
+    }
+
+    function play() {
+        audio = new Audio('music/Borders.mp3');
+        audio.play();
+        intervalId = window.setInterval(function(){
+          goNext();
+        }, 2000);
+      }
+
+    function stop(){
+        clearInterval(intervalId);
+        audio.pause();
+    }
+
+  </script>
+</head>
+
+<body onload='start()'>
+  <p>Song: "Borders" by 1beatproductions</p>
+  <button onclick="play()" class="button">Play music</button>
+  <button onclick="stop()" class="button">Stop music</button>
+
+  <div id='promptContainer'>
+    <h1 class='prompt'></h1>
+  </div>
+  <div id='container'>
+  </div>
+  <div id='numContainer'>
+  </div>
+  
+  <button onclick='goPrev()' id='prev'> Prev </button>
+  <button onclick='goNext()' id='next'> Next </button>
+</body>
+
+</html>
